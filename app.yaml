@@ -2,8 +2,3 @@ runtime: nodejs10
 
 env_variables:
   BUCKET_NAME: "dragonball-api-nodejs"
-
-- url: /.*
-  secure: always
-  redirect_http_response_code: 301
-  script: auto

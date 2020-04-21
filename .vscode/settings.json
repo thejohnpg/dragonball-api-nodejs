@@ -1,8 +1,0 @@
-{
-    "appService.zipIgnorePattern": [
-        "node_modules{,/**}",
-        ".vscode{,/**}"
-    ],
-    "appService.defaultWebAppToDeploy": "/subscriptions/ea0b1274-37c7-4416-93a5-ace3abff6ccc/resourceGroups/appsvc_linux_centralus/providers/Microsoft.Web/sites/dragonball-api-nodejs",
-    "appService.deploySubpath": ""
-}

@@ -1,0 +1,30 @@
+{
+  "name": "dragonball-api-nodejs",
+  "version": "1.0.0",
+  "description": "API from dragonball in nodejs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon src/index.js"
+  },
+  "keywords": [
+    "dragonball",
+    "api",
+    "dragonball",
+    "api",
+    "dragonball",
+    "in",
+    "nodejs"
+  ],
+  "author": "John Peterson",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "knex": "^0.21.0",
+    "sqlite3": "^4.1.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.3"
+  }
+}

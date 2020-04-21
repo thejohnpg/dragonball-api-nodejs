@@ -1,18 +1,24 @@
-const sqlite3 = require("sqlite3").verbose();
+const knex = require("knex")({
+  client: "sqlite3",
+  connection: {
+    filename: "./src/database/dragon-ball-db.sqlite3",
+  },
+});
 
 module.exports = {
-  async list(request, response) {
-    const db = new sqlite3.Database("./src/database/dragon-ball-db.sqlite3");
+  list: async (request, response) => {
+    try {
+      const sagasResult = await knex("sagas_saga")
+        .select("sagas_saga.*")
+        .limit(4);
 
-    const sql = `SELECT DISTINCT * from sagas_saga GROUP BY nm_saga;`;
-
-    db.all(sql, (error, result) => {
-      if (error) {
-        return response.status(404).json({ error });
-      }
-      return response.status(200).json({ sagas: result });
-    });
-
-    db.close();
+      response.status(200).json({
+        sagasResult,
+      });
+    } catch (error) {
+      response.status(403).json({
+        error,
+      });
+    }
   },
 };

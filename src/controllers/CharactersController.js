@@ -1,40 +1,39 @@
-const sqlite3 = require("sqlite3").verbose();
+const knex = require('knex')({
+  client: 'sqlite3',
+  connection: {
+    filename: './src/database/dragon-ball-db.sqlite3',
+  },
+});
+
 
 module.exports = {
-    list(request, response) {
-    const db = new sqlite3.Database("./src/database/dragon-ball-db.sqlite3");
+  list: async (request, response) => {
 
-    const { page = 1 } = request.query;
-
-    const totalItems = [];
+    const { page = 0 } = request.query;
     const itemsPerPage = 10;
 
-    const sqlTotalItens = `SELECT COUNT(*) FROM character_character`;
-    
-    // Total Itens in Character
-    db.all(sqlTotalItens,(error, total) => {
-        return totalItems.push(total)
-    })
 
-    // Info Total Pages 
-    console.log(totalItems)
+    try {
+      const [ totalItemsResult ] = await knex('character_character').count({ count: 1 }).whereNotNull('img_character');
+      const charactersResult = await knex('character_character')
+        .select('character_character.*', 'character_type_character.nm_type_character', 'sagas_saga.nm_saga')
+        .leftJoin('character_type_character', 'character_character.type_id_id', 'character_type_character.id')
+        .leftJoin('sagas_saga', 'character_character.saga_id_id', 'sagas_saga.id')
+        .whereNotNull('img_character')
+        .limit(itemsPerPage)
+        .offset((page - 1) * 10);
 
-    const sql = 
-    `SELECT character_character.*, character_type_character.nm_type_character, sagas_saga.nm_saga
-    FROM character_character 
-    LEFT JOIN character_type_character 
-    ON character_character.type_id_id = character_type_character.id
-    LEFT JOIN sagas_saga
-    ON character_character.saga_id_id = sagas_saga.id
-    WHERE fighting_power > 0
-	LIMIT ${itemsPerPage} OFFSET ${(page - 1) * 10};`;
-
-    db.all(sql, (error, result) => {
-      if (error) {
-        return response.status(404).json({ error });
-      }
-      return response.status(200).json({ characters: result });
-    });
-    db.close();
+      response.status(200).json({
+        pagination: {
+          totalItems: totalItemsResult.count,
+          itemsPerPage,
+          totalPages: Math.ceil(totalItemsResult.count/itemsPerPage),
+          currentPage: parseInt(page),
+        },
+        characters: charactersResult
+      });
+    } catch (error) {
+      response.status(422).json(error);
+    }
   },
 };
